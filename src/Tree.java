@@ -14,14 +14,15 @@ public class Tree extends PApplet {
     private boolean  draw = true;
 
     public void setup(){
-        size(Configuration.width,Configuration.height);
+        Configuration config = Configuration.getInstance();
+        size(config.getWidth(),config.getHeight());
         background(255);
 
-        ShapeBasedPlacer placer = ShapeBasedPlacer.fromFile(Configuration.shape_file, Color.black);
+        ShapeBasedPlacer placer = ShapeBasedPlacer.fromFile(config.getShapeFile(), Color.black);
 
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(Configuration.input_file));
+            reader = new BufferedReader(new FileReader(config.getInputFile()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -43,7 +44,7 @@ public class Tree extends PApplet {
             .fromWords(words.toArray(new Word[words.size()]))
             .withPlacer(placer)
             .withNudger(placer)
-            .sizedByWeight(Configuration.minSize,Configuration.maxSize);
+            .sizedByWeight(config.getMinSize(),config.getMaxSize());
     }
 
     public void draw() {
@@ -53,25 +54,26 @@ public class Tree extends PApplet {
             this.draw = false;
             System.out.println("Finished drawing");
             //tell me what didn’t get drawn
-
-            int noSpace = 0;
-            int tooSmall = 0;
-            Word[] skippedWords = cram.getSkippedWords();
-            Word[] placedWords = cram.getWords();
-            for (Word skipped: skippedWords) {
-                if (skipped.wasSkippedBecause() == WordCram.NO_SPACE) {
-                    noSpace++;
-                } else if (skipped.wasSkippedBecause() == WordCram.SHAPE_WAS_TOO_SMALL) {
-                    tooSmall++;
+            if(Configuration.getInstance().isDebug()){
+                int noSpace = 0;
+                int tooSmall = 0;
+                Word[] skippedWords = cram.getSkippedWords();
+                Word[] placedWords = cram.getWords();
+                for (Word skipped: skippedWords) {
+                    if (skipped.wasSkippedBecause() == WordCram.NO_SPACE) {
+                        noSpace++;
+                    } else if (skipped.wasSkippedBecause() == WordCram.SHAPE_WAS_TOO_SMALL) {
+                        tooSmall++;
+                    }
                 }
+                System.out.println("Total placed Words: " + placedWords.length);
+                System.out.println("Total Skipped Words: " + skippedWords.length);
+                System.out.println("Skipped because no Space: " + noSpace);
+                System.out.println("Skipped because too small: " + tooSmall);
+                System.out.println("Finished");
             }
-            System.out.println("Total placed Words: " + placedWords.length);
-            System.out.println("Total Skipped Words: " + skippedWords.length);
-            System.out.println("Skipped because no Space: " + noSpace);
-            System.out.println("Skipped because too small: " + tooSmall);
-            System.out.println("Finished");
 
-            save(Configuration.output_file);
+            save(Configuration.getInstance().getOutputFile());
             exit();
         }
     }

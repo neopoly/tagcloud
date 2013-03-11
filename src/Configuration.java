@@ -1,9 +1,39 @@
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 public class Configuration {
-    public static String shape_file  = "shape.png";
-    public static String input_file  = "input.txt";
-    public static String output_file = "out.png";
-    public static int width = 500;
-    public static int height = 636;
-    public static int minSize = 4;
-    public static int maxSize = 38;
+    private static Configuration instance = null;
+
+    private Properties prop = new Properties();
+
+    private Configuration(){}
+
+    public String getShapeFile(){ return prop.getProperty("shapeFile"); }
+    public String getInputFile(){ return prop.getProperty("inputFile"); }
+    public String getOutputFile(){ return prop.getProperty("outputFile"); }
+    public int getWidth() { return Integer.parseInt(prop.getProperty("width")); }
+    public int getHeight(){ return Integer.parseInt(prop.getProperty("height")); }
+    public int getMinSize(){ return Integer.parseInt(prop.getProperty("minSize")); }
+    public int getMaxSize(){ return Integer.parseInt(prop.getProperty("maxSize")); }
+
+    public boolean isDebug(){
+        return prop.getProperty("debug") == "true";
+    }
+
+    public void load(){
+        try {
+            prop.load(new FileInputStream("config.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Configuration getInstance(){
+        if(instance == null){
+            instance = new Configuration();
+        }
+        return instance;
+    }
+
 }
