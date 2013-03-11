@@ -16,9 +16,10 @@ public class Configuration {
     public int getHeight(){ return Integer.parseInt(prop.getProperty("height")); }
     public int getMinSize(){ return Integer.parseInt(prop.getProperty("minSize")); }
     public int getMaxSize(){ return Integer.parseInt(prop.getProperty("maxSize")); }
-
+    public String getColors(){ return prop.getProperty("colors"); }
+    public String getBackgroundColor(){return prop.getProperty("background"); }
     public boolean isDebug(){
-        return prop.getProperty("debug") == "true";
+        return prop.getProperty("debug") != null && prop.getProperty("debug").equals("true");
     }
 
     public void load(){

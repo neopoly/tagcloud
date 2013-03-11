@@ -1,3 +1,6 @@
+/*
+ * Copied from: http://wordcram.org/2013/02/13/shapes-for-wordcram/
+ */
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -18,13 +21,12 @@ import processing.core.PVector;
 import wordcram.Word;
 import wordcram.WordNudger;
 import wordcram.WordPlacer;
-
 class ShapeBasedPlacer implements WordPlacer, WordNudger {
 
-    public static int TOLERANCE = 5;
+    public static int TOLERANCE   = 5;
     public static boolean PRECISE = false;
-    public static int GLYPH_SIZE = 500;
-    public static int FONT_STYLE = Font.PLAIN;
+    public static int GLYPH_SIZE  = 500;
+    public static int FONT_STYLE  = Font.PLAIN;
 
     Area area;
     float minX;
