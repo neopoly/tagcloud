@@ -1,4 +1,4 @@
-mythology,25
+mythology,50.0
 children,25
 lemonade,25
 compression,25
