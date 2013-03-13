@@ -21,14 +21,16 @@ public class Tree extends PApplet {
 
         ShapeBasedPlacer placer  = ShapeBasedPlacer.fromFile(config.getShapeFile(), Color.black);
         InputWords       input   = new InputWords(config.getInputFile());
+        Word[]           words   = input.getWords();
         TreeColorer      colorer = new TreeColorer(config.getColors());
+        WordSizer        sizer   = new WordSizer(config.getMinSize(), config.getMaxSize(), words);
 
         cram = new WordCram(this)
-            .fromWords(input.getWords())
+            .fromWords(words)
             .withColorer(colorer)
             .withPlacer(placer)
             .withNudger(placer)
-            .sizedByWeight(config.getMinSize(),config.getMaxSize());
+            .withSizer(sizer);
     }
 
 
