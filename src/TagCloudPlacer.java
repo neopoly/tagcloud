@@ -21,7 +21,7 @@ import processing.core.PVector;
 import wordcram.Word;
 import wordcram.WordNudger;
 import wordcram.WordPlacer;
-class ShapeBasedPlacer implements WordPlacer, WordNudger {
+class TagCloudPlacer implements WordPlacer, WordNudger {
 
     public static int TOLERANCE   = 5;
     public static boolean PRECISE = false;
@@ -36,7 +36,7 @@ class ShapeBasedPlacer implements WordPlacer, WordNudger {
     Random random;
     BufferedImage image = null;
 
-    public ShapeBasedPlacer(Shape shape) {
+    public TagCloudPlacer(Shape shape) {
         this.area = new Area(shape);
         init();
     }
@@ -50,7 +50,7 @@ class ShapeBasedPlacer implements WordPlacer, WordNudger {
         this.maxY = (float) areaBounds.getMaxY();
     }
 
-    public static ShapeBasedPlacer fromTextGlyphs(String text, String fontName) {
+    public static TagCloudPlacer fromTextGlyphs(String text, String fontName) {
         Font font = null;
         Graphics2D g2d;
         FontRenderContext frc;
@@ -60,21 +60,21 @@ class ShapeBasedPlacer implements WordPlacer, WordNudger {
         g2d = img.createGraphics();
         frc = g2d.getFontRenderContext();
         gv = font.createGlyphVector(frc, text);
-        return new ShapeBasedPlacer(gv.getOutline(GLYPH_SIZE / 10,GLYPH_SIZE));
+        return new TagCloudPlacer(gv.getOutline(GLYPH_SIZE / 10,GLYPH_SIZE));
     }
 
-    private ShapeBasedPlacer(BufferedImage image) {
+    private TagCloudPlacer(BufferedImage image) {
         this.image = image;
     }
 
-    public static ShapeBasedPlacer fromFile(String path, Color color) {
+    public static TagCloudPlacer fromFile(String path, Color color) {
         BufferedImage image = null;
         try {
             image = ImageIO.read(new File(path));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ShapeBasedPlacer result = new ShapeBasedPlacer(image);
+        TagCloudPlacer result = new TagCloudPlacer(image);
         if (PRECISE) {
             result.fromImagePrecise(color);
         } else {

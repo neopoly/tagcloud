@@ -1,10 +1,26 @@
 import java.awt.*;
+
+/**
+ * Utility class to transform and parse colors.
+ */
 public class ColorHelper {
-    public static int transform(Color c){
+    /**
+     * Transforms a java.awt.Color to processings internal int representation.
+     *
+     * @param c the color to be transformed
+     * @return A processing color value
+     */
+    public static int transform(Color c) {
         return (c.getAlpha() << 24) | (c.getRed() << 16) | (c.getGreen() << 8) | c.getBlue();
     }
 
-    public static int decode(String c){
+    /**
+     * Decodes a color string in HEX-Values
+     *
+     * @param c the color string to be transformed
+     * @return A processing color value
+     */
+    public static int decodeHex(String c) {
         return transform(Color.decode(c));
     }
 }
