@@ -20,6 +20,8 @@ public class TagCloudGenerator extends PApplet {
 
     private WordCram cram;
 
+    public static Color FOREGROUND_COLOR = Color.black;
+
     /**
      * Called before the first draw from the processing main application
      */
@@ -28,7 +30,7 @@ public class TagCloudGenerator extends PApplet {
         size(config.getWidth(), config.getHeight());
         background(ColorHelper.decodeHex(config.getBackgroundColor()));
 
-        TagCloudPlacer placer = TagCloudPlacer.fromFile(config.getShapeFile(), Color.black);
+        TagCloudPlacer placer = TagCloudPlacer.fromFile(config.getShapeFile(), FOREGROUND_COLOR, false);
         WordsReader input = new WordsReader(config.getInputFile());
         Word[] words = input.getWords();
         TagCloudColorer colorer = new TagCloudColorer(config.getColors());

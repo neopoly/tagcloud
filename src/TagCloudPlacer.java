@@ -1,13 +1,5 @@
-/*
- * Copied from: http://wordcram.org/2013/02/13/shapes-for-wordcram/
- */
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -21,67 +13,67 @@ import processing.core.PVector;
 import wordcram.Word;
 import wordcram.WordNudger;
 import wordcram.WordPlacer;
+
+/**
+ * Places and nudges words in the TagCloud basing on a shape image.
+ * <p/>
+ * Main parts from the comment section of: http://wordcram.org/2013/02/13/shapes-for-wordcram/
+ */
 class TagCloudPlacer implements WordPlacer, WordNudger {
 
-    public static int TOLERANCE   = 5;
-    public static boolean PRECISE = false;
-    public static int GLYPH_SIZE  = 500;
-    public static int FONT_STYLE  = Font.PLAIN;
+    public static int TOLERANCE = 5;
 
-    Area area;
-    float minX;
-    float minY;
-    float maxX;
-    float maxY;
-    Random random;
-    BufferedImage image = null;
+    private Area area;
+    private float minX, minY, maxX, maxY;
+    private Random random;
+    private BufferedImage image;
 
-    public TagCloudPlacer(Shape shape) {
-        this.area = new Area(shape);
-        init();
+    private TagCloudPlacer(BufferedImage image) {
+        this.image = image;
     }
 
-    private void init() {
+    private TagCloudPlacer init() {
         random = new Random();
         Rectangle2D areaBounds = area.getBounds2D();
         this.minX = (float) areaBounds.getMinX();
         this.minY = (float) areaBounds.getMinY();
         this.maxX = (float) areaBounds.getMaxX();
         this.maxY = (float) areaBounds.getMaxY();
+        return this;
     }
 
-    public static TagCloudPlacer fromTextGlyphs(String text, String fontName) {
-        Font font = null;
-        Graphics2D g2d;
-        FontRenderContext frc;
-        GlyphVector gv;
-        font = new Font(fontName,FONT_STYLE,GLYPH_SIZE);
-        BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        g2d = img.createGraphics();
-        frc = g2d.getFontRenderContext();
-        gv = font.createGlyphVector(frc, text);
-        return new TagCloudPlacer(gv.getOutline(GLYPH_SIZE / 10,GLYPH_SIZE));
-    }
-
-    private TagCloudPlacer(BufferedImage image) {
-        this.image = image;
-    }
-
-    public static TagCloudPlacer fromFile(String path, Color color) {
+    /**
+     * Build a place with bases on an image load from a File
+     * @param path  Path to load the file from.
+     * @param color Color to use as foreground
+     * @param precise Shell the used shape be precise as the image information. Seems to be better with false
+     * @return a placer instance bound to the image
+     */
+    public static TagCloudPlacer fromFile(String path, Color color, boolean precise) {
         BufferedImage image = null;
         try {
             image = ImageIO.read(new File(path));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return fromImage(image, color, precise);
+    }
+
+    /**
+     * Build a place with bases on an image
+     * @param image The shape image
+     * @param color Color to use as foreground
+     * @param precise Shell the used shape be precise as the image information. Seems to be better with false
+     * @return a placer instance bound to the image
+     */
+    public static TagCloudPlacer fromImage(BufferedImage image, Color color, boolean precise){
         TagCloudPlacer result = new TagCloudPlacer(image);
-        if (PRECISE) {
+        if (precise) {
             result.fromImagePrecise(color);
         } else {
             result.fromImageSloppy(color);
         }
-        result.init();
-        return result;
+        return result.init();
     }
 
     private void fromImagePrecise(Color color) {
@@ -116,7 +108,6 @@ class TagCloudPlacer implements WordPlacer, WordNudger {
                         r = new Rectangle(x, y1, 1, y2 - y1);
                         area.add(new Area(r));
                         y1 = y;
-                        y2 = y;
                     }
                     y2 = y;
                 }
@@ -129,8 +120,8 @@ class TagCloudPlacer implements WordPlacer, WordNudger {
         this.area = area;
     }
 
-    public PVector place(Word w, int rank, int count, int ww, int wh, int fw,
-                         int fh) {
+    @Override
+    public PVector place(Word w, int rank, int count, int ww, int wh, int fw, int fh) {
 
         w.setProperty("width", ww);
         w.setProperty("height", wh);
@@ -146,6 +137,7 @@ class TagCloudPlacer implements WordPlacer, WordNudger {
         return new PVector(-1, -1);
     }
 
+    @Override
     public PVector nudgeFor(Word word, int attempt) {
         PVector target = word.getTargetPlace();
         float wx = target.x;
@@ -165,11 +157,11 @@ class TagCloudPlacer implements WordPlacer, WordNudger {
         return new PVector(-1, -1);
     }
 
-    float randomBetween(float a, float b) {
+    private float randomBetween(float a, float b) {
         return a + random.nextFloat() * (b - a);
     }
 
-    boolean isIncluded(Color target, Color pixel) {
+    private boolean isIncluded(Color target, Color pixel) {
         int rT = target.getRed();
         int gT = target.getGreen();
         int bT = target.getBlue();
