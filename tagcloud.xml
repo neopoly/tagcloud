@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="tagcloud" default="all">
+
+  <property name="skip.tests" value="true"/>
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="128m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/.pyc/**"/>
+    <exclude name="**/.pyo/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/*.lib/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/.bundle/**"/>
+    <exclude name="**/*.rbc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.ear"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
+    <include name="*.swc"/>
+    <include name="*.ane"/>
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <include name="**/?*.properties"/>
+    <include name="**/?*.xml"/>
+    <include name="**/?*.gif"/>
+    <include name="**/?*.png"/>
+    <include name="**/?*.jpeg"/>
+    <include name="**/?*.jpg"/>
+    <include name="**/?*.html"/>
+    <include name="**/?*.dtd"/>
+    <include name="**/?*.tld"/>
+    <include name="**/?*.ftl"/>
+  </patternset>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.lib.classpath">
+    <fileset dir="${basedir}/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  
+  <!-- Global Libraries -->
+  
+  
+  <!-- Application Server Libraries -->
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module tagcloud -->
+  
+  <dirname property="module.tagcloud.basedir" file="${ant.file}"/>
+  
+  
+  
+  <property name="compiler.args.tagcloud" value="${compiler.args}"/>
+  
+  <property name="tagcloud.output.dir" value="${module.tagcloud.basedir}/out/production/tagcloud"/>
+  <property name="tagcloud.testoutput.dir" value="${module.tagcloud.basedir}/out/test/tagcloud"/>
+  
+  <path id="tagcloud.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="tagcloud.module.production.classpath">
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="tagcloud.runtime.production.module.classpath">
+    <pathelement location="${tagcloud.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="tagcloud.module.classpath">
+    <pathelement location="${tagcloud.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="tagcloud.runtime.module.classpath">
+    <pathelement location="${tagcloud.testoutput.dir}"/>
+    <pathelement location="${tagcloud.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.tagcloud">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.tagcloud">
+    <patternset refid="excluded.from.module.tagcloud"/>
+  </patternset>
+  
+  <path id="tagcloud.module.sourcepath">
+    <dirset dir="${module.tagcloud.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.tagcloud" depends="compile.module.tagcloud.production,compile.module.tagcloud.tests" description="Compile module tagcloud"/>
+  
+  <target name="compile.module.tagcloud.production" description="Compile module tagcloud; production classes">
+    <mkdir dir="${tagcloud.output.dir}"/>
+    <javac destdir="${tagcloud.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+      <compilerarg line="${compiler.args.tagcloud}"/>
+      <bootclasspath refid="tagcloud.module.bootclasspath"/>
+      <classpath refid="tagcloud.module.production.classpath"/>
+      <src refid="tagcloud.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.tagcloud"/>
+    </javac>
+    
+    <copy todir="${tagcloud.output.dir}">
+      <fileset dir="${module.tagcloud.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.tagcloud.tests" depends="compile.module.tagcloud.production" description="compile module tagcloud; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.tagcloud" description="cleanup module">
+    <delete dir="${tagcloud.output.dir}"/>
+    <delete dir="${tagcloud.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.tagcloud" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.tagcloud" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.tagcloud:jar" value="${basedir}/build"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.tagcloud.jar" value="${artifacts.temp.dir}/tagcloud.jar"/>
+  </target>
+  
+  <target name="artifact.tagcloud:jar" depends="init.artifacts, compile.module.tagcloud" description="Build &#39;tagcloud:jar&#39; artifact">
+    <property name="artifact.temp.output.tagcloud:jar" value="${artifacts.temp.dir}/tagcloud_jar"/>
+    <mkdir dir="${artifact.temp.output.tagcloud:jar}"/>
+    <jar destfile="${temp.jar.path.tagcloud.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset file="${basedir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
+      <zipfileset dir="${tagcloud.output.dir}"/>
+      <zipfileset src="${basedir}/lib/WordCram.jar"/>
+      <zipfileset src="${basedir}/lib/core.jar"/>
+    </jar>
+    <copy file="${temp.jar.path.tagcloud.jar}" tofile="${artifact.temp.output.tagcloud:jar}/tagcloud.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.tagcloud:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.tagcloud:jar}"/>
+    <copy todir="${artifact.output.tagcloud:jar}">
+      <fileset dir="${artifact.temp.output.tagcloud:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
