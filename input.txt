@@ -154,3 +154,5 @@ site,5
 china,5
 clients,5
 widget,5
+ser-feliç,25
+santé,25

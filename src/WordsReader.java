@@ -1,9 +1,6 @@
 import wordcram.Word;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -16,6 +13,7 @@ import java.util.ArrayList;
  * WEIGHT will be parsed as a Float
  */
 public class WordsReader {
+    private static final String UTF8 = "UTF-8";
     private String file;
     public static final String SEPARATOR = ",";
 
@@ -36,8 +34,11 @@ public class WordsReader {
 
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader(file));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), UTF8));
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return new Word[0];
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return new Word[0];
         }
